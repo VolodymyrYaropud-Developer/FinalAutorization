@@ -13,5 +13,6 @@ namespace FinalAutorization.Models
 
         [Required(ErrorMessage = "Password is required")]
         public string Password { get; set; }
+        // Add Confirm passowrd
     }
 }

@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Owin.Security.OpenIdConnect;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -40,6 +39,7 @@ namespace FinalAutorization.Controllers
         [Route("login")]
         public async Task<IActionResult> Login( LoginModel loginModel)
         {
+            // Move this logic to separate class. 
             var user = await userManager.FindByNameAsync(loginModel.Username);
             if (user != null && await userManager.CheckPasswordAsync(user, loginModel.Password))
             {
@@ -66,12 +66,14 @@ namespace FinalAutorization.Controllers
                     expiration = token.ValidTo
                 });
             }
+            //BadRequest
             return Unauthorized();
         }
         [HttpPost]
         [Route("register")]
         public async Task<IActionResult> Register(RegisterModel registerModel)
         {
+            //Same, move to separate class
             var userExist = await userManager.FindByNameAsync(registerModel.userName);
             if (userExist != null)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User alredy exists" });
