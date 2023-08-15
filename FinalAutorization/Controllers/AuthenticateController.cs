@@ -1,12 +1,14 @@
 ﻿using FinalAutorization.Context;
 using FinalAutorization.Models;
 using FinalAutorization.Servivces;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Owin.Security.OpenIdConnect;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -36,7 +38,7 @@ namespace FinalAutorization.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Login(/*[FromBody]*/ LoginModel loginModel)
+        public async Task<IActionResult> Login( LoginModel loginModel)
         {
             var user = await userManager.FindByNameAsync(loginModel.Username);
             if (user != null && await userManager.CheckPasswordAsync(user, loginModel.Password))
@@ -45,7 +47,6 @@ namespace FinalAutorization.Controllers
                 var authClaims = new List<Claim>
                 {
                     new Claim (ClaimTypes.Name, user.UserName),
-                 // new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())//??
                 };
 
                 foreach (var userRole in userRoles)
@@ -69,7 +70,7 @@ namespace FinalAutorization.Controllers
         }
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> Register(/*[FromBody]*/ RegisterModel registerModel)
+        public async Task<IActionResult> Register(RegisterModel registerModel)
         {
             var userExist = await userManager.FindByNameAsync(registerModel.userName);
             if (userExist != null)
@@ -81,7 +82,7 @@ namespace FinalAutorization.Controllers
                 UserName = registerModel.userName
             };
             var result = await userManager.CreateAsync(user, registerModel.Password);
-            
+
             if (!result.Succeeded)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response
                 {
@@ -95,7 +96,7 @@ namespace FinalAutorization.Controllers
 
         [HttpPost]
         [Route("register-admin")]
-        public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel registerModel)
+        public async Task<IActionResult> RegisterAdmin( RegisterModel registerModel)
         {
             var userExists = await userManager.FindByNameAsync(registerModel.userName);
             if (userExists != null)

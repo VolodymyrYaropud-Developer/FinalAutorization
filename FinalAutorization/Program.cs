@@ -17,26 +17,33 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<UsersDBContext>(opt=> opt.UseSqlServer(builder.Configuration.GetConnectionString("ConnStr")));
-builder.Services.AddIdentity<User,IdentityRole>()
+builder.Services.AddDbContext<UsersDBContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("ConnStr")));
+builder.Services.AddIdentity<User, IdentityRole>(opt => { 
+    opt.Password.RequiredUniqueChars    = 0;
+    opt.Password.RequiredLength         = 10;
+    opt.Password.RequireLowercase       = false;
+    opt.Password.RequireUppercase       = true;
+    opt.Password.RequireNonAlphanumeric = false;
+})
     .AddEntityFrameworkStores<UsersDBContext>()
     .AddDefaultTokenProviders();
+
 builder.Services.AddAuthentication(opt =>
 {
-    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    opt.DefaultAuthenticateScheme   = JwtBearerDefaults.AuthenticationScheme;
+    opt.DefaultChallengeScheme      = JwtBearerDefaults.AuthenticationScheme;
+    opt.DefaultScheme               = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(opt =>
 {
-    opt.SaveToken = true;
-    opt.RequireHttpsMetadata = false;
-    opt.TokenValidationParameters = new TokenValidationParameters()
+    opt.SaveToken                   = true;
+    opt.RequireHttpsMetadata        = false;
+    opt.TokenValidationParameters   = new TokenValidationParameters()
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidAudience = builder.Configuration["JWT:ValidAudience"],
-        ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
+        ValidateIssuer      = true,
+        ValidateAudience    = true,
+        ValidAudience       = builder.Configuration["JWT:ValidAudience"],
+        ValidIssuer         = builder.Configuration["JWT:ValidIssuer"],
+        IssuerSigningKey    = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
     };
 });
 
