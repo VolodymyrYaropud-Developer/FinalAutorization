@@ -21,7 +21,6 @@ builder.Services.AddDbContext<UsersDBContext>(opt => opt.UseSqlServer(builder.Co
 builder.Services.AddIdentity<User, IdentityRole>(opt => { 
     opt.Password.RequiredUniqueChars    = 0;
     opt.Password.RequiredLength         = 10;
-    opt.Password.RequireLowercase       = false;
     opt.Password.RequireUppercase       = true;
     opt.Password.RequireNonAlphanumeric = false;
 })
@@ -35,13 +34,14 @@ builder.Services.AddAuthentication(opt =>
     opt.DefaultScheme               = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(opt =>
 {
-    opt.SaveToken                   = true;
+    //Not nessesary
+    //opt.SaveToken                   = true;
     opt.RequireHttpsMetadata        = false;
     opt.TokenValidationParameters   = new TokenValidationParameters()
     {
         ValidateIssuer      = true,
         ValidateAudience    = true,
-        ValidAudience       = builder.Configuration["JWT:ValidAudience"],
+        ValidAudience       = builder.Configuration["JWT:ValidAudience"],// Use IOptions to parse JSON file
         ValidIssuer         = builder.Configuration["JWT:ValidIssuer"],
         IssuerSigningKey    = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
     };
@@ -58,7 +58,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
+app.UseAuthentication();
 app.MapControllers();
 
 app.Run();
