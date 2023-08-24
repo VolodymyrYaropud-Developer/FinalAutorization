@@ -13,9 +13,29 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
+bool IsDockerUsed = false;
+
+string dbHost;
+string dbName;
+string dbPassword;
+string connectionString;
+
+if (IsDockerUsed)
+{
+    dbHost = Environment.GetEnvironmentVariable("DB_HOST");
+    dbName = Environment.GetEnvironmentVariable("DB_NAME");
+    dbPassword = Environment.GetEnvironmentVariable("MSSQL_SA_PASSWORD");
+    connectionString = builder.Configuration.GetConnectionString("DockerConnectionString");
+}
+else
+{
+    connectionString = builder.Configuration.GetConnectionString("ConnStr");
+}
+
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<UsersDBContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("ConnStr")));
+builder.Services.AddDbContext<UsersDBContext>(opt => opt.UseSqlServer(connectionString));
 builder.Services.AddIdentity<User, IdentityRole>(opt => { 
     opt.Password.RequiredUniqueChars    = 0;
     opt.Password.RequiredLength         = 10;
