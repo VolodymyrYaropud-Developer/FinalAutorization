@@ -38,12 +38,7 @@ namespace FinalAutorization.Controllers
         [Route("login")]
         public async Task<IActionResult> Login(LoginModel loginModel)
         {
-            loginModel.Email = "user@example.com";
-            loginModel.Password = "Hello123321Hello123321";
             var loginUser = ControllerServise.IsLoginSuccess(loginModel, userManager, configuration);
-            //user@example.com
-            //Hello123321Hello123321
-            
             if (loginUser.Result.Status == true)
                 return Ok(loginUser.Result);
 
@@ -53,10 +48,9 @@ namespace FinalAutorization.Controllers
         [Route("register")]
         public async Task<IActionResult> Register(RegisterModel registerModel)
         {
-            var registerUser = ControllerServise.IsRegisterSuccess(registerModel, userManager);
-
-            if (registerUser.Result.Status == true)
-                return Ok(registerUser.Result);
+            var value = ControllerServise.IsRegisterSuccess(registerModel, userManager);
+                if (value.Result.Status == true)
+                return Ok(value.Result);
             return BadRequest();
         }
 
