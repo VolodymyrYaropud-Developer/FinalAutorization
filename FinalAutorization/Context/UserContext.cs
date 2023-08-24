@@ -24,6 +24,16 @@ namespace FinalAutorization.Context
                 Console.WriteLine(ex.Message);
             }
 
+                if (dbCreator != null)
+                {
+                    if (!dbCreator.CanConnect()) dbCreator.Create();
+                    if (!dbCreator.HasTables()) dbCreator.CreateTables();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
