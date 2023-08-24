@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
-bool IsDockerUsed = false;
+bool IsDockerUsed = true;
 
 string dbHost;
 string dbName;
@@ -25,7 +25,7 @@ if (IsDockerUsed)
     dbHost = Environment.GetEnvironmentVariable("DB_HOST");
     dbName = Environment.GetEnvironmentVariable("DB_NAME");
     dbPassword = Environment.GetEnvironmentVariable("MSSQL_SA_PASSWORD");
-    connectionString = builder.Configuration.GetConnectionString("DockerConnectionString");
+    connectionString = string.Format(builder.Configuration.GetConnectionString("DockerConnectionString"), dbHost, dbName, dbPassword);
 }
 else
 {
@@ -36,10 +36,11 @@ else
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<UsersDBContext>(opt => opt.UseSqlServer(connectionString));
-builder.Services.AddIdentity<User, IdentityRole>(opt => { 
-    opt.Password.RequiredUniqueChars    = 0;
-    opt.Password.RequiredLength         = 10;
-    opt.Password.RequireUppercase       = true;
+builder.Services.AddIdentity<User, IdentityRole>(opt =>
+{
+    opt.Password.RequiredUniqueChars = 0;
+    opt.Password.RequiredLength = 10;
+    opt.Password.RequireUppercase = true;
     opt.Password.RequireNonAlphanumeric = false;
 })
     .AddEntityFrameworkStores<UsersDBContext>()
@@ -47,21 +48,21 @@ builder.Services.AddIdentity<User, IdentityRole>(opt => {
 
 builder.Services.AddAuthentication(opt =>
 {
-    opt.DefaultAuthenticateScheme   = JwtBearerDefaults.AuthenticationScheme;
-    opt.DefaultChallengeScheme      = JwtBearerDefaults.AuthenticationScheme;
-    opt.DefaultScheme               = JwtBearerDefaults.AuthenticationScheme;
+    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(opt =>
 {
     //Not nessesary
     //opt.SaveToken                   = true;
-    opt.RequireHttpsMetadata        = false;
-    opt.TokenValidationParameters   = new TokenValidationParameters()
+    opt.RequireHttpsMetadata = false;
+    opt.TokenValidationParameters = new TokenValidationParameters()
     {
-        ValidateIssuer      = true,
-        ValidateAudience    = true,
-        ValidAudience       = builder.Configuration["JWT:ValidAudience"],// Use IOptions to parse JSON file
-        ValidIssuer         = builder.Configuration["JWT:ValidIssuer"],
-        IssuerSigningKey    = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration["JWT:ValidAudience"],// Use IOptions to parse JSON file
+        ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
     };
 });
 

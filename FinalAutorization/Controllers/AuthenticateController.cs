@@ -36,7 +36,7 @@ namespace FinalAutorization.Controllers
         public async Task<IActionResult> Login(LoginModel loginModel)
         {
             var loginUser = await _controllerService.IsLoginSuccess(loginModel);
-            if (loginUser.Status == true)
+            if (loginUser.Status)
                 return Ok(loginUser);
 
             return BadRequest();
@@ -46,9 +46,9 @@ namespace FinalAutorization.Controllers
         public async Task<IActionResult> Register(RegisterModel registerModel)
         {
             var value = await _controllerService.IsRegisterSuccess(registerModel);
-                if (value.Status == true)
+                if (value.Status)
                 return Ok(value);
-            return BadRequest();
+            return BadRequest(value.Message);
         }
 
 

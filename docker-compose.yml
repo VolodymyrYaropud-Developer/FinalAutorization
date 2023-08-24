@@ -1,0 +1,33 @@
+version: '3.4'
+
+networks:
+  backend:
+
+services:
+  autorization_db:
+    container_name: autorizationdb
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=P@ssw0rd121#
+    networks:
+      - backend
+    ports:
+      - 5001:1433
+  finalautorization:
+    container_name: final-autorization
+    image: yourpovilitel/finalautorization:latest
+    build:
+      context: .
+      dockerfile: FinalAutorization/Dockerfile
+    networks:
+      - backend
+    ports:
+      - 5002:80
+    environment:
+      - DB_HOST=autorization_db
+      - DB_NAME=usersdb
+      - MSSQL_SA_PASSWORD=P@ssw0rd121#
+    depends_on: 
+      - autorization_db
+
