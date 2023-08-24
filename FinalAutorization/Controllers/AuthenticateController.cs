@@ -1,23 +1,17 @@
 ﻿using FinalAutorization.Context;
 using FinalAutorization.Models;
 using FinalAutorization.Servivces;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace FinalAutorization.Controllers
 {
+
+    public class TestService
+    {
+
+    }
     [Route("api/[controller]")]
     [ApiController]
     public class AuthenticateController : ControllerBase
@@ -25,22 +19,25 @@ namespace FinalAutorization.Controllers
         private readonly UserManager<User> userManager;
         //private readonly RoleManager<IdentityRole> roleManager;
         private readonly IConfiguration configuration;
+        private TestService testService;
+        private IControllerService _controllerService;
 
-        public AuthenticateController(UserManager<User> _userManager,
-            RoleManager<IdentityRole> _roleManager, IConfiguration _configuration)
+        public AuthenticateController(UsersDBContext usersContext,UserManager<User> _userManager,
+            RoleManager<IdentityRole> _roleManager, IConfiguration _configuration, IControllerService controllerService)
         {
             userManager = _userManager;
             //roleManager = _roleManager;
             configuration = _configuration;
+            _controllerService = controllerService;
         }
 
         [HttpPost]
         [Route("login")]
         public async Task<IActionResult> Login(LoginModel loginModel)
         {
-            var loginUser = ControllerServise.IsLoginSuccess(loginModel, userManager, configuration);
-            if (loginUser.Result.Status == true)
-                return Ok(loginUser.Result);
+            var loginUser = await _controllerService.IsLoginSuccess(loginModel);
+            if (loginUser.Status == true)
+                return Ok(loginUser);
 
             return BadRequest();
         }
@@ -48,9 +45,9 @@ namespace FinalAutorization.Controllers
         [Route("register")]
         public async Task<IActionResult> Register(RegisterModel registerModel)
         {
-            var value = ControllerServise.IsRegisterSuccess(registerModel, userManager);
-                if (value.Result.Status == true)
-                return Ok(value.Result);
+            var value = await _controllerService.IsRegisterSuccess(registerModel);
+                if (value.Status == true)
+                return Ok(value);
             return BadRequest();
         }
 

@@ -1,20 +1,18 @@
-using FinalAutorization;
 using FinalAutorization.Context;
 using FinalAutorization.Models;
+using FinalAutorization.Servivces;
 using FinalAutorization.Servivces.JWTData;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-//using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
 // Add services to the container.
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<UsersDBContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("ConnStr")));
@@ -22,7 +20,7 @@ builder.Services.AddIdentity<User, IdentityRole>(opt => {
     opt.Password.RequiredUniqueChars    = 0;
     opt.Password.RequiredLength         = 10;
     opt.Password.RequireUppercase       = true;
-    opt.Password.RequireNonAlphanumeric = false; // ??
+    opt.Password.RequireNonAlphanumeric = false;
 })
     .AddEntityFrameworkStores<UsersDBContext>()
     .AddDefaultTokenProviders();
@@ -47,6 +45,8 @@ builder.Services.AddAuthentication(opt =>
     };
 });
 
+builder.Services.AddScoped<IControllerService, ControllerServise>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -62,7 +62,7 @@ app.UseAuthentication();
 app.MapControllers();
 
 app.Run();
- void ConfigureServices(IServiceCollection services)
+void ConfigureServices(IServiceCollection services)
 {
 
     services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));

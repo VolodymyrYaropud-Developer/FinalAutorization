@@ -1,32 +1,34 @@
 ﻿using FinalAutorization.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using FinalAutorization.Servivces.JWTData;
 
 namespace FinalAutorization.Servivces
 {
-    public static class ControllerServise
+    public  class ControllerServise : IControllerService
     {
+        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly UserManager<User> _userManager;
+        private readonly IConfiguration _config;
+        private readonly JwtSettings _jwtSettings;
 
-        private static readonly RoleManager<IdentityRole> roleManager;
-        //private static readonly IConfiguration configuration;
-        private static readonly IServiceCollection services;
-        private static readonly JwtSettings _jwtSettings;
+        public ControllerServise(UserManager<User> userManager, IConfiguration config)
+        {
+            _config = config;
+            _userManager = userManager;
+        }
 
-        public async static Task<Response> IsLoginSuccess(LoginModel loginModel, UserManager<User> userManager, IConfiguration config)
+        public async Task<Response> IsLoginSuccess(LoginModel loginModel)
         {
             try
             {                                                                   //user@example.com        
-                var user = await userManager.FindByEmailAsync(loginModel.Email);//Hello123321Hello123321
-                if (user != null && await userManager.CheckPasswordAsync(user, loginModel.Password))
+                var user = await _userManager.FindByEmailAsync(loginModel.Email);//Hello123321Hello123321
+                if (user != null && await _userManager.CheckPasswordAsync(user, loginModel.Password))
                 {
-                    var userRoles = await userManager.GetRolesAsync(user);
+                    var userRoles = await _userManager.GetRolesAsync(user);
                     var authClaims = new List<Claim>
                     {
                     new Claim (ClaimTypes.Name, user.UserName),
@@ -38,12 +40,12 @@ namespace FinalAutorization.Servivces
                     }
                     //var _jwtSettings = new AuthenticateController();
                     var token = new JwtSecurityToken(
-                        issuer: config["JWT:ValidIssuer"],
-                        audience: config["JWT:ValidAudience"],
+                        issuer: _config["JWT:ValidIssuer"],
+                        audience: _config["JWT:ValidAudience"],
                         expires:DateTime.Now.AddHours(3),
                         claims: authClaims,
                         signingCredentials: new  SigningCredentials(
-                                            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JWT:Secret"])),
+                                            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Secret"])),
                                                SecurityAlgorithms.HmacSha256)
                         );
 
@@ -90,24 +92,26 @@ namespace FinalAutorization.Servivces
         //}
 
 
-        public async static Task<Response> IsRegisterSuccess(RegisterModel registerModel, UserManager<User> userManager)
+        public async Task<Response> IsRegisterSuccess(RegisterModel registerModel)
         {
             try
             {
-                var userExist = await userManager.FindByEmailAsync(registerModel.Email);
+                var userExist = await _userManager.FindByEmailAsync(registerModel.Email);
                 if (userExist != null)
                     return new Response
                     {
                         Status = false,
                         Message = "User alredy exists"
                     };
+
                 User user = new User()
                 {
                     Email = registerModel.Email,
                     SecurityStamp = Guid.NewGuid().ToString(),
                     UserName = registerModel.userName
                 };
-                var result = await userManager.CreateAsync(user, registerModel.Password);
+
+                var result = await _userManager.CreateAsync(user, registerModel.Password);
 
                 if (!result.Succeeded)
                     return new Response
