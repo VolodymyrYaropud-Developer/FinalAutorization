@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FinalAutorization", "FinalA
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{9E014DEB-C689-4E38-9D2E-410238353887}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Epa-ApiGatway", "Epa-ApiGatway\Epa-ApiGatway\Epa-ApiGatway.csproj", "{8A6AB765-174C-4CDA-9C01-7BBAE76AC0DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JwtAuthHandler", "JwtAuthHandler\JwtAuthHandler.csproj", "{D6CD45D0-90FE-4814-BD9B-6B0897E31D00}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{9E014DEB-C689-4E38-9D2E-410238353887}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E014DEB-C689-4E38-9D2E-410238353887}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E014DEB-C689-4E38-9D2E-410238353887}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A6AB765-174C-4CDA-9C01-7BBAE76AC0DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A6AB765-174C-4CDA-9C01-7BBAE76AC0DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A6AB765-174C-4CDA-9C01-7BBAE76AC0DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A6AB765-174C-4CDA-9C01-7BBAE76AC0DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6CD45D0-90FE-4814-BD9B-6B0897E31D00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6CD45D0-90FE-4814-BD9B-6B0897E31D00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6CD45D0-90FE-4814-BD9B-6B0897E31D00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6CD45D0-90FE-4814-BD9B-6B0897E31D00}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

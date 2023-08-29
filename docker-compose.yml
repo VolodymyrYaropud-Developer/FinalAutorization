@@ -22,12 +22,19 @@ services:
       dockerfile: FinalAutorization/Dockerfile
     networks:
       - backend
-    ports:
-      - 5002:80
     environment:
       - DB_HOST=autorization_db
       - DB_NAME=usersdb
       - MSSQL_SA_PASSWORD=P@ssw0rd121#
     depends_on: 
       - autorization_db
+  epa-apigatway:
+    image: ${DOCKER_REGISTRY-}epaapigatway
+    build:
+      context: .
+      dockerfile: Epa-ApiGatway/Epa-ApiGatway/Dockerfile
+    networks:
+      - backend
+    ports:
+      - 8002:80 
 

@@ -1,24 +1,18 @@
 ﻿using FinalAutorization.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using FinalAutorization.Servivces.JWTData;
+using JwtAuthHandler;
 
 namespace FinalAutorization.Servivces
 {
     public  class ControllerServise : IControllerService
     {
-        private readonly RoleManager<IdentityRole> roleManager;
         private readonly UserManager<User> _userManager;
-        private readonly IConfiguration _config;
-        private readonly JwtSettings _jwtSettings;
+        private readonly JwtHandler _jwtHandler;
 
-        public ControllerServise(UserManager<User> userManager, IConfiguration config)
+        public ControllerServise(UserManager<User> userManager, JwtHandler jwtHandler)
         {
-            _config = config;
             _userManager = userManager;
+            _jwtHandler = jwtHandler;
         }
 
         public async Task<Response> IsLoginSuccess(LoginModel loginModel)
@@ -26,39 +20,24 @@ namespace FinalAutorization.Servivces
             try
             {                                                                   //user@example.com        
                 var user = await _userManager.FindByEmailAsync(loginModel.Email);//Hello123321Hello123321
+
                 if (user != null && await _userManager.CheckPasswordAsync(user, loginModel.Password))
                 {
                     var userRoles = await _userManager.GetRolesAsync(user);
-                    var authClaims = new List<Claim>
-                    {
-                    new Claim (ClaimTypes.Name, user.UserName),
-                    };
 
-                    foreach (var userRole in userRoles)
-                    {
-                        authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-                    }
-                    //var _jwtSettings = new AuthenticateController();
-                    var token = new JwtSecurityToken(
-                        issuer: _config["JWT:ValidIssuer"],
-                        audience: _config["JWT:ValidAudience"],
-                        expires:DateTime.Now.AddHours(3),
-                        claims: authClaims,
-                        signingCredentials: new  SigningCredentials(
-                                            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Secret"])),
-                                               SecurityAlgorithms.HmacSha256)
-                        );
+                    var token = _jwtHandler.GenerateToken(user.UserName, userRoles);
 
                     return new Response
                     {
                         Status = true,
-                        Message = new JwtSecurityTokenHandler().WriteToken(token),
+                        Message = token,
                         
                     };
                 }
                 return new Response
                 {
-                    Status = false
+                    Status = false,
+                    Message = "Token generation - failed!"                    
                 };
             }
             catch (Exception ex)

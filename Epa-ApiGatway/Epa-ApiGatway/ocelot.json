@@ -1,0 +1,131 @@
+{
+  "Routes": [
+    // Authentication
+    {
+      "UpstreamPathTemplate": "/api/Authenticate/register",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "finalautorization",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Authenticate/register"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Authenticate/login",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "finalautorization",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Authenticate/login"
+    },
+    // Word lists
+    {
+      "UpstreamPathTemplate": "/api/wordlist",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "epa-webapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/wordlist",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/wordlist/{id}",
+      "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "epa-webapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/wordlist/{id}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    // WordPool
+    {
+      "UpstreamPathTemplate": "/api/wordpool",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "epa-webapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/wordpool",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/wordpool/{id}",
+      "UpstreamHttpMethod": [ "Put", "Delete" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "epa-webapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/wordpool/{id}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    //Open AI
+    {
+      "UpstreamPathTemplate": "/api/OpenAI/start",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "epa-webapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/OpenAI/start",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/OpenAI/check",
+      "UpstreamHttpMethod": [ "Post" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "epa-webapi",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/OpenAI/start",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:800"
+  }
+}

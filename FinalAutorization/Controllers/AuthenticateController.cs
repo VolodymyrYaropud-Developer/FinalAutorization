@@ -1,33 +1,18 @@
-﻿using FinalAutorization.Context;
-using FinalAutorization.Models;
+﻿using FinalAutorization.Models;
 using FinalAutorization.Servivces;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 
 namespace FinalAutorization.Controllers
 {
-
-    public class TestService
-    {
-
-    }
     [Route("api/[controller]")]
     [ApiController]
     public class AuthenticateController : ControllerBase
     {
-        private readonly UserManager<User> userManager;
-        //private readonly RoleManager<IdentityRole> roleManager;
-        private readonly IConfiguration configuration;
-        private TestService testService;
-        private IControllerService _controllerService;
+        private readonly IControllerService _controllerService;
 
-        public AuthenticateController(UsersDBContext usersContext,UserManager<User> _userManager,
-            RoleManager<IdentityRole> _roleManager, IConfiguration _configuration, IControllerService controllerService)
+        public AuthenticateController(IControllerService controllerService)
         {
-            userManager = _userManager;
-            //roleManager = _roleManager;
-            configuration = _configuration;
             _controllerService = controllerService;
         }
 
@@ -39,14 +24,14 @@ namespace FinalAutorization.Controllers
             if (loginUser.Status)
                 return Ok(loginUser);
 
-            return BadRequest();
+            return BadRequest(loginUser.Message);
         }
         [HttpPost]
         [Route("register")]
         public async Task<IActionResult> Register(RegisterModel registerModel)
         {
             var value = await _controllerService.IsRegisterSuccess(registerModel);
-                if (value.Status)
+            if (value.Status)
                 return Ok(value);
             return BadRequest(value.Message);
         }

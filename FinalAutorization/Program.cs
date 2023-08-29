@@ -1,12 +1,9 @@
 using FinalAutorization.Context;
 using FinalAutorization.Models;
 using FinalAutorization.Servivces;
-using FinalAutorization.Servivces.JWTData;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using JwtAuthHandler;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,25 +43,8 @@ builder.Services.AddIdentity<User, IdentityRole>(opt =>
     .AddEntityFrameworkStores<UsersDBContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddAuthentication(opt =>
-{
-    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(opt =>
-{
-    //Not nessesary
-    //opt.SaveToken                   = true;
-    opt.RequireHttpsMetadata = false;
-    opt.TokenValidationParameters = new TokenValidationParameters()
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidAudience = builder.Configuration["JWT:ValidAudience"],// Use IOptions to parse JSON file
-        ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
-    };
-});
+builder.Services.AddJwtAuthwntication();
+builder.Services.AddSingleton<JwtHandler>();
 
 builder.Services.AddScoped<IControllerService, ControllerServise>();
 
@@ -83,11 +63,6 @@ app.UseAuthentication();
 app.MapControllers();
 
 app.Run();
-void ConfigureServices(IServiceCollection services)
-{
-
-    services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
-}
 
 
 
